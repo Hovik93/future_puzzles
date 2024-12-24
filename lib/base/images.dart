@@ -38,4 +38,10 @@ class AppImages {
   static const String articleScenario2 = 'assets/articleScenario2.png';
   static const String quizScenario1 = 'assets/quizScenario1.png';
   static const String quizScenario2 = 'assets/quizScenario2.png';
+
+  static const String fastLearner = 'assets/fast_learner.png';
+  static const String trendSpotter = 'assets/trend_spotter.png';
+  static const String visionary = 'assets/visionary.png';
+  static const String futurist = 'assets/futurist.png';
+  static const String quizWhiz = 'assets/quiz_whiz.png';
 }

@@ -77,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20.w),
+                  padding: EdgeInsets.symmetric(vertical: 30.w),
                   child: InkWell(
                     onTap: () {
                       _launchURL(urlLink: userAgreementUrl);

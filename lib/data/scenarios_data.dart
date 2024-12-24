@@ -12,34 +12,36 @@ Map<String, dynamic> scenariosData = {
           "title":
               "How Humans Could Colonize Mars: Technologies and Challenges",
           "image": AppImages.articleScenario1,
-          "text":
+          "content":
               "The colonization of Mars presents unprecedented challenges. Scientists are focusing on technologies such as space habitats, radiation protection, and food production systems to make life possible on the Red Planet. To build a sustainable ecosystem, we must rely on local resources (like regolith and ice) and advanced bioengineering to create air and water cycles within closed habitats. Moreover, advanced propulsion systems will reduce travel time, making Mars more accessible. The future could see human colonies that are self-sustaining and thriving in this hostile environment."
         },
         "puzzle": {
           "title": "What Would Martian Cities Look Like 100 Years from Now?",
           "image": AppImages.quizScenario1,
-          "questions": [
+          "quizzes": [
             {
-              "question":
+              "title": "",
+              "description":
                   "What materials are most likely to be used to build structures on Mars?",
-              "answers": [
-                "Regolith-based concrete",
-                "Wood and metal",
-                "Ice and glass",
-                "Plastic and rubber"
+              "options": [
+                "A: Regolith-based concrete",
+                "B: Wood and metal",
+                "C: Ice and glass",
+                "D: Plastic and rubber"
               ],
-              "correct_answer": "Regolith-based concrete"
+              "correct_answer": "A"
             },
             {
-              "question":
+              "title": "",
+              "description":
                   "What is the most likely source of energy for Martian cities?",
-              "answers": [
-                "Solar panels",
-                "Coal power",
-                "Geothermal energy",
-                "Wind turbines"
+              "options": [
+                "A: Solar panels",
+                "B: Coal power",
+                "C: Geothermal energy",
+                "D: Wind turbines"
               ],
-              "correct_answer": "Solar panels"
+              "correct_answer": "A"
             }
           ]
         }
@@ -55,33 +57,35 @@ Map<String, dynamic> scenariosData = {
         "article": {
           "title": "AI and Humans: How Working Together Will Change Society",
           "image": AppImages.articleScenario2,
-          "text":
+          "content":
               "By 2050, AI will not replace humans but rather augment their abilities. This collaboration will lead to a new kind of workforce, where humans focus on creative and emotional intelligence, while AI handles repetitive tasks. In sectors such as healthcare, AI can help doctors by analyzing vast amounts of medical data and predicting outcomes, while humans make the final decisions. In education, AI tutors will adapt to the needs of each student, providing personalized learning experiences. This partnership will redefine what it means to work and live in a world where AI and humans are equals."
         },
         "puzzle": {
           "title": "How Will AI Be Used in Everyday Life in 2050?",
           "image": AppImages.quizScenario2,
-          "questions": [
+          "quizzes": [
             {
-              "question":
+              "title": "",
+              "description":
                   "Which of the following tasks could AI handle in daily life?",
-              "answers": [
-                "Personal assistants for scheduling",
-                "Emotion-based therapy",
-                "Creating new scientific theories",
-                "Reading literature and writing poetry"
+              "options": [
+                "A: Personal assistants for scheduling",
+                "B: Emotion-based therapy",
+                "C: Creating new scientific theories",
+                "D: Reading literature and writing poetry"
               ],
-              "correct_answer": "Personal assistants for scheduling"
+              "correct_answer": "A"
             },
             {
-              "question": "What role will AI play in education?",
-              "answers": [
-                "Managing student behavior",
-                "Providing personalized tutoring",
-                "Designing the school curriculum",
-                "Marking student assignments"
+              "title": "",
+              "description": "What role will AI play in education?",
+              "options": [
+                "A: Managing student behavior",
+                "B: Providing personalized tutoring",
+                "C: Designing the school curriculum",
+                "D: Marking student assignments"
               ],
-              "correct_answer": "Providing personalized tutoring"
+              "correct_answer": "B"
             }
           ]
         }

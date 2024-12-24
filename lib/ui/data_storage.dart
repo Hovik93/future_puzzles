@@ -2,6 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class DataStorage {
   static const String _onboardingKey = 'onboarding_seen';
+  static const String _userNameKey = 'user_name';
 
   static Future<bool> isOnboardingSeen() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -11,5 +12,15 @@ class DataStorage {
   static Future<void> setOnboardingSeen() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_onboardingKey, true);
+  }
+
+  static Future<String> getUserName() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_userNameKey) ?? "User";
+  }
+
+  static Future<void> setUserName(String userName) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_userNameKey, userName);
   }
 }

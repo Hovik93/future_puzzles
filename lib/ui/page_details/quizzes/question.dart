@@ -116,23 +116,25 @@ class _QuestionState extends State<Question> {
   }
 
   Widget questionTitle(TextTheme theme, String title) {
-    return Container(
-      width: double.infinity,
-      height: 50.w,
-      padding: EdgeInsets.symmetric(vertical: 10.w),
-      decoration: BoxDecoration(
-        color: AppColors.blue1,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Center(
-        child: Text(
-          title,
-          style: theme.titleMedium?.copyWith(
-            color: AppColors.white,
-          ),
-        ),
-      ),
-    );
+    return title.isNotEmpty
+        ? Container(
+            width: double.infinity,
+            height: 50.w,
+            padding: EdgeInsets.symmetric(vertical: 10.w),
+            decoration: BoxDecoration(
+              color: AppColors.blue1,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Center(
+              child: Text(
+                title,
+                style: theme.titleMedium?.copyWith(
+                  color: AppColors.white,
+                ),
+              ),
+            ),
+          )
+        : SizedBox.shrink();
   }
 
   Widget questionDescription(TextTheme theme, String description) {
@@ -234,7 +236,7 @@ class _QuestionState extends State<Question> {
           ),
           SizedBox(height: 10.w),
           Text(
-            explanation,
+            explanation ?? '',
             textAlign: TextAlign.center,
             style: theme.bodyMedium,
           ),

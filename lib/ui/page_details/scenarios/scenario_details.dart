@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:future_puzzles/base/colors.dart';
+import 'package:future_puzzles/ui/page_details/articles/article_details.dart';
+import 'package:future_puzzles/ui/page_details/quizzes/question.dart';
 
 // ignore: must_be_immutable
 class ScenarioDetails extends StatefulWidget {
@@ -81,7 +83,17 @@ class _ScenarioDetailsState extends State<ScenarioDetails> {
                         description: widget.scenarioData['content']["article"]
                             ['title'],
                         onTap: () {
-                          // Добавьте переход к статье
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) {
+                              return ArticlesDetails(
+                                title: "Article",
+                                beforeTitle: "Articles",
+                                articleData: widget.scenarioData['content']
+                                    ["article"],
+                              );
+                            }),
+                          );
                         },
                       ),
                       SizedBox(height: 10.w),
@@ -93,7 +105,17 @@ class _ScenarioDetailsState extends State<ScenarioDetails> {
                         description:
                             "Answer the questions and earn prize points",
                         onTap: () {
-                          // Добавьте переход к квизу
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) {
+                              return Question(
+                                title: "Question",
+                                beforeTitle: "Quizzes",
+                                quizData: widget.scenarioData['content']
+                                    ["puzzle"],
+                              );
+                            }),
+                          );
                         },
                       ),
                     ],
@@ -147,72 +169,72 @@ class _ScenarioDetailsState extends State<ScenarioDetails> {
     required VoidCallback onTap,
     required String images,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        height: 120.w,
-        margin: EdgeInsets.only(bottom: 10.w),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.w),
-          image: DecorationImage(
-            image: AssetImage(images),
-            fit: BoxFit.cover,
-          ),
+    return Container(
+      width: double.infinity,
+      height: 120.w,
+      margin: EdgeInsets.only(bottom: 10.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.w),
+        image: DecorationImage(
+          image: AssetImage(images),
+          fit: BoxFit.cover,
         ),
-        child: Stack(
-          alignment: Alignment.bottomLeft,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.black.withOpacity(0.6),
-                    Colors.transparent,
-                  ],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                ),
-                borderRadius: BorderRadius.circular(12.w),
+      ),
+      child: Stack(
+        alignment: Alignment.bottomLeft,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.black.withOpacity(0.6),
+                  Colors.transparent,
+                ],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
               ),
+              borderRadius: BorderRadius.circular(12.w),
             ),
-            Padding(
-              padding: EdgeInsets.all(12.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8.w),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                      child: Container(
-                        width: 239.w,
-                        padding: EdgeInsets.all(5.w),
-                        margin: EdgeInsets.symmetric(vertical: 5.w),
-                        decoration: BoxDecoration(
-                          color: AppColors.grey1.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(8.w),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              title,
-                              style: theme.titleMedium
-                                  ?.copyWith(color: Colors.white),
-                            ),
-                            SizedBox(height: 5.w),
-                            Text(
-                              description,
-                              style: theme.bodySmall?.copyWith(
-                                  color: Colors.white, fontSize: 13.w),
-                            ),
-                          ],
-                        ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(12.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.w),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                    child: Container(
+                      width: 239.w,
+                      padding: EdgeInsets.all(5.w),
+                      margin: EdgeInsets.symmetric(vertical: 5.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.grey1.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(8.w),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: theme.titleMedium
+                                ?.copyWith(color: Colors.white),
+                          ),
+                          SizedBox(height: 5.w),
+                          Text(
+                            description,
+                            style: theme.bodySmall
+                                ?.copyWith(color: Colors.white, fontSize: 13.w),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  ClipRRect(
+                ),
+                GestureDetector(
+                  onTap: onTap,
+                  child: ClipRRect(
                     borderRadius: BorderRadius.circular(8.w),
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
@@ -230,12 +252,12 @@ class _ScenarioDetailsState extends State<ScenarioDetails> {
                         ),
                       ),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
