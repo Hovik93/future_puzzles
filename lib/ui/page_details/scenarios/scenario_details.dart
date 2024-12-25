@@ -49,7 +49,7 @@ class _ScenarioDetailsState extends State<ScenarioDetails> {
                           widget.scenarioData['image'],
                           width: double.infinity,
                           height: 362.w,
-                          fit: BoxFit.cover, // Заполняет контейнер
+                          fit: BoxFit.cover,
                         ),
                       ),
                       Padding(

@@ -17,12 +17,6 @@ final lightTheme = ThemeData(
       fontSize: 17.sp,
       fontFamily: "Expletus Sans",
     ),
-    titleSmall: TextStyle(
-      color: AppColors.black,
-      fontWeight: FontWeight.w400,
-      fontSize: 14.sp,
-      fontFamily: "Expletus Sans",
-    ),
     titleMedium: TextStyle(
       color: AppColors.black,
       fontWeight: FontWeight.w400,

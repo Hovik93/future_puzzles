@@ -7,6 +7,7 @@ import 'package:future_puzzles/data/achievements_data.dart';
 import 'package:future_puzzles/data/scenarios_data.dart';
 import 'package:future_puzzles/ui/data_storage.dart';
 import 'package:future_puzzles/ui/page_details/award.dart';
+import 'package:future_puzzles/ui/page_details/scenarios/scenario_details.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -18,11 +19,67 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String userName = "User";
   bool isEditingName = false;
+  Map<String, int> achievements = {};
+  int totalPoints = 0;
 
   @override
   void initState() {
     super.initState();
     _loadUserName();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      achievements = await DataStorage.getAchievements();
+      _updateAchievementsData();
+      setState(() {});
+    });
+  }
+
+  void _updateAchievementsData() {
+    for (final achievement in achievementsData["achievements"]) {
+      final achievementKey =
+          achievement["title"].toLowerCase().replaceAll(' ', '_');
+      if ((((achievements[achievementKey] ?? 0) >= 5) &&
+              (achievementKey == "visionary")) ||
+          (((achievements[achievementKey] ?? 0) >= 10) &&
+              (achievementKey == "fast_learner")) ||
+          (((achievements[achievementKey] ?? 0) >= 5) &&
+              (achievementKey == "trend_spotter")) ||
+          (((achievements[achievementKey] ?? 0) >= 50) &&
+              (achievementKey == "quiz_whiz"))) {
+        achievement['lock'] = false;
+      } else if (achievementKey == "futurist") {
+        final visionaryUnlocked = achievementsData["achievements"].firstWhere(
+                (a) =>
+                    a["title"].toLowerCase().replaceAll(' ', '_') ==
+                    "visionary")['lock'] ==
+            false;
+        final fastLearnerUnlocked = achievementsData["achievements"].firstWhere(
+                (a) =>
+                    a["title"].toLowerCase().replaceAll(' ', '_') ==
+                    "fast_learner")['lock'] ==
+            false;
+        final trendSpotterUnlocked = achievementsData["achievements"]
+                .firstWhere((a) =>
+                    a["title"].toLowerCase().replaceAll(' ', '_') ==
+                    "trend_spotter")['lock'] ==
+            false;
+
+        if (visionaryUnlocked && fastLearnerUnlocked && trendSpotterUnlocked) {
+          achievement['lock'] = false;
+        } else {
+          achievement['lock'] = true;
+        }
+      } else {
+        achievement['lock'] = true;
+      }
+    }
+
+    totalPoints = achievementsData["achievements"]
+        .where((achievement) => !achievement["lock"])
+        .fold<int>(
+          0,
+          (int sum, Map<String, dynamic> achievement) =>
+              sum + (achievement["points"] as int? ?? 0),
+        );
   }
 
   Future<void> _loadUserName() async {
@@ -162,7 +219,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: Center(
                   child: Text(
-                    '100',
+                    "$totalPoints",
                     style: theme.titleLarge?.copyWith(color: AppColors.white),
                   ),
                 ),
@@ -186,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               child: Center(
                 child: Text(
-                  '6',
+                  "${achievements['fast_learner']}",
                   style: theme.titleLarge?.copyWith(color: AppColors.white),
                 ),
               ),
@@ -247,24 +304,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
             scrollDirection: Axis.horizontal,
             itemCount: achievementsData["achievements"].length,
             itemBuilder: (context, index) {
+              final achievement = achievementsData["achievements"][index];
+              final achievementKey =
+                  achievement["title"].toLowerCase().replaceAll(' ', '_');
+
+              if ((((achievements[achievementKey] ?? 0) >= 5) &&
+                      (achievementKey == "visionary")) ||
+                  (((achievements[achievementKey] ?? 0) >= 10) &&
+                      (achievementKey == "fast_learner")) ||
+                  (((achievements[achievementKey] ?? 0) >= 5) &&
+                      (achievementKey == "trend_spotter")) ||
+                  (((achievements[achievementKey] ?? 0) >= 50) &&
+                      (achievementKey == "quiz_whiz"))) {
+                achievement['lock'] = false;
+              } else if (achievementKey == "futurist") {
+                final visionaryUnlocked = achievementsData["achievements"]
+                        .firstWhere((a) =>
+                            a["title"].toLowerCase().replaceAll(' ', '_') ==
+                            "visionary")['lock'] ==
+                    false;
+
+                final fastLearnerUnlocked = achievementsData["achievements"]
+                        .firstWhere((a) =>
+                            a["title"].toLowerCase().replaceAll(' ', '_') ==
+                            "fast_learner")['lock'] ==
+                    false;
+
+                final trendSpotterUnlocked = achievementsData["achievements"]
+                        .firstWhere((a) =>
+                            a["title"].toLowerCase().replaceAll(' ', '_') ==
+                            "trend_spotter")['lock'] ==
+                    false;
+
+                if (visionaryUnlocked &&
+                    fastLearnerUnlocked &&
+                    trendSpotterUnlocked) {
+                  achievement['lock'] = false;
+                } else {
+                  achievement['lock'] = true;
+                }
+              } else {
+                achievement['lock'] = true;
+              }
               return GestureDetector(
-                onTap: () async {
-                  await DataStorage.addRecentData({
-                    "type": "Award",
-                    "data": achievementsData["achievements"][index],
-                  });
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) {
-                      return Award(
-                        title: "Award",
-                        beforeTitle: "Profile",
-                        achievementsData: achievementsData["achievements"]
-                            [index],
-                      );
-                    }),
-                  );
-                },
+                onTap: (achievement['lock'] == false)
+                    ? () async {
+                        await DataStorage.addRecentData({
+                          "type": "Award",
+                          "data": achievementsData["achievements"][index],
+                        });
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) {
+                            return Award(
+                              title: "Award",
+                              beforeTitle: "Profile",
+                              achievementsData: achievementsData["achievements"]
+                                  [index],
+                            );
+                          }),
+                        );
+                      }
+                    : () {},
                 child: Container(
                   width: 93.w,
                   height: 93.w,
@@ -281,15 +382,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12.w),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                          child: Container(
-                            color: Colors.black.withOpacity(0.3),
+                      if (achievement['lock'] == true)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12.w),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                            child: Container(
+                              color: Colors.black.withOpacity(0.3),
+                            ),
                           ),
                         ),
-                      ),
                       Container(
                         width: 44.w,
                         height: 44.w,
@@ -297,11 +399,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           color: AppColors.grey1.withOpacity(0.3),
                           borderRadius: BorderRadius.circular(8.w),
                         ),
-                        child: Icon(
-                          Icons.lock_outline_rounded,
-                          color: Colors.white,
-                          size: 32.w,
-                        ),
+                        child: achievement['lock'] == true
+                            ? Icon(
+                                Icons.lock_outline_rounded,
+                                color: Colors.white,
+                                size: 32.w,
+                              )
+                            : const SizedBox.shrink(),
                       ),
                     ],
                   ),
@@ -330,45 +434,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
             scrollDirection: Axis.horizontal,
             itemCount: scenariosData["scenarios"].length,
             itemBuilder: (context, index) {
-              return Container(
-                width: 93.w,
-                height: 93.w,
-                margin: EdgeInsets.only(right: 10.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.w),
-                  image: DecorationImage(
-                    image: AssetImage(
-                      scenariosData["scenarios"][index]["image"],
+              final scenario = scenariosData["scenarios"][index];
+              final isUnlocked = (index == 0 && totalPoints >= 500) ||
+                  (index == 1 && totalPoints >= 1000);
+
+              return GestureDetector(
+                onTap: isUnlocked
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) {
+                            return ScenarioDetails(
+                              title: "Scenario",
+                              beforeTitle: "Scenarios",
+                              scenarioData: scenario,
+                            );
+                          }),
+                        );
+                      }
+                    : () {},
+                child: Container(
+                  width: 93.w,
+                  height: 93.w,
+                  margin: EdgeInsets.only(right: 10.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.w),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        scenario["image"],
+                      ),
+                      fit: BoxFit.cover,
                     ),
-                    fit: BoxFit.cover,
                   ),
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12.w),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                        child: Container(
-                          color: Colors.black.withOpacity(0.3),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (!isUnlocked)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12.w),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                            child: Container(
+                              color: Colors.black.withOpacity(0.3),
+                            ),
+                          ),
+                        ),
+                      Container(
+                        width: 44.w,
+                        height: 44.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.grey1.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(8.w),
+                        ),
+                        child: Icon(
+                          !isUnlocked
+                              ? Icons.lock_outline_rounded
+                              : Icons.lock_open_rounded,
+                          color: Colors.white,
+                          size: 32.w,
                         ),
                       ),
-                    ),
-                    Container(
-                      width: 44.w,
-                      height: 44.w,
-                      decoration: BoxDecoration(
-                        color: AppColors.grey1.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(8.w),
-                      ),
-                      child: Icon(
-                        Icons.lock_outline_rounded,
-                        color: Colors.white,
-                        size: 32.w,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },

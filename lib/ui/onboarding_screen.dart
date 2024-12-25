@@ -72,7 +72,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       flex: 4,
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        // color: Colors.green,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -95,7 +94,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                       bool showOnboarding =
                                           await DataStorage.isOnboardingSeen();
                                       if (!showOnboarding) {
-                                        // Показать онбординг
                                         await DataStorage.setOnboardingSeen();
                                       }
                                       Navigator.pushReplacementNamed(
@@ -122,8 +120,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                 : SizedBox(
                                     height: 20.w,
                                   ),
-
-                            /// dotes
                             Padding(
                               padding: index == onBoardingImages.last['index']
                                   ? EdgeInsets.only(bottom: 10.w)
@@ -149,8 +145,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                                 ],
                               ),
                             ),
-
-                            ///
                             SizedBox(
                               height: 10.w,
                             )

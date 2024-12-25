@@ -31,9 +31,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-// onTap: () {
-//                   _launchURL(urlLink: privacyPolicyUrl);
-//                 },
   Widget body({required TextTheme theme}) {
     return SafeArea(
       child: Padding(

@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       recentData = await DataStorage.getRecentData();
-      print(recentData);
+
       if (mounted) {
         setState(() {});
       }
@@ -219,7 +219,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    recentBlock(theme: theme),
+                    recentData.isNotEmpty
+                        ? recentBlock(theme: theme)
+                        : const SizedBox(),
                   ],
                 ),
               ),

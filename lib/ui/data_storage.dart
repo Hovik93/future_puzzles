@@ -5,6 +5,7 @@ class DataStorage {
   static const String _onboardingKey = 'onboarding_seen';
   static const String _userNameKey = 'user_name';
   static const String _recentDataKey = 'recent_data';
+  static const String _achievementsKey = 'achievements';
 
   static Future<bool> isOnboardingSeen() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -26,7 +27,6 @@ class DataStorage {
     await prefs.setString(_userNameKey, userName);
   }
 
-  // Управление recentData
   static Future<List<Map<String, dynamic>>> getRecentData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? jsonString = prefs.getString(_recentDataKey);
@@ -39,15 +39,12 @@ class DataStorage {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     List<Map<String, dynamic>> currentList = await getRecentData();
 
-    // Добавляем новый элемент
     currentList.insert(0, newData);
 
-    // Удаляем старые элементы, если их больше 10
     if (currentList.length > 10) {
       currentList = currentList.sublist(0, 10);
     }
 
-    // Сохраняем обновленный список
     final String jsonString = json.encode(currentList);
     await prefs.setString(_recentDataKey, jsonString);
   }
@@ -55,5 +52,28 @@ class DataStorage {
   static Future<void> clearRecentData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove(_recentDataKey);
+  }
+
+  static Future<Map<String, int>> getAchievements() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? jsonString = prefs.getString(_achievementsKey);
+    if (jsonString == null) {
+      return {
+        "fast_learner": 0,
+        "trend_spotter": 0,
+        "visionary": 0,
+        "futurist": 0,
+        "quiz_whiz": 0,
+      };
+    }
+    return Map<String, int>.from(json.decode(jsonString));
+  }
+
+  static Future<void> updateAchievement(String key, int increment) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String, int> achievements = await getAchievements();
+    achievements[key] = (achievements[key] ?? 0) + increment;
+    final String jsonString = json.encode(achievements);
+    await prefs.setString(_achievementsKey, jsonString);
   }
 }

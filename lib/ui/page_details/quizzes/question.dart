@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:future_puzzles/base/colors.dart';
 import 'package:future_puzzles/base/images.dart';
+import 'package:future_puzzles/ui/data_storage.dart';
 
 class Question extends StatefulWidget {
   final String? title;
@@ -31,7 +32,6 @@ class _QuestionState extends State<Question> {
   @override
   void initState() {
     super.initState();
-    // Выбираем случайные 5 вопросов
     randomQuizzes = (widget.quizData['quizzes'] as List<Map<String, dynamic>>)
         .toList()
       ..shuffle();
@@ -147,7 +147,6 @@ class _QuestionState extends State<Question> {
 
   List<Widget> buildOptions(TextTheme theme, List<String> options) {
     return options.asMap().entries.map((entry) {
-      // final index = entry.key;
       final option = entry.value;
 
       return GestureDetector(
@@ -156,7 +155,8 @@ class _QuestionState extends State<Question> {
             selectedOption = option;
             if (option.split(':')[0] ==
                 randomQuizzes[currentQuestionIndex]['correct_answer']) {
-              correctAnswers++; // Увеличиваем счетчик правильных ответов
+              correctAnswers++;
+              DataStorage.updateAchievement("trend_spotter", 1);
             }
           });
         },
@@ -252,12 +252,10 @@ class _QuestionState extends State<Question> {
           : () {
               if (!showResult) {
                 if (!showAnswer) {
-                  // Если правильный ответ ещё не показан
                   setState(() {
                     showAnswer = true;
                   });
                 } else {
-                  // Если правильный ответ показан
                   if (currentQuestionIndex < randomQuizzes.length - 1) {
                     setState(() {
                       currentQuestionIndex++;
@@ -274,19 +272,17 @@ class _QuestionState extends State<Question> {
               } else {
                 switch (buttonText) {
                   case 'Try again':
-                    // Перезапуск текущего набора вопросов
                     setState(() {
                       currentQuestionIndex = 0;
                       correctAnswers = 0;
                       selectedOption = null;
                       showAnswer = false;
                       showResult = false;
-                      randomQuizzes.shuffle(); // Перемешиваем вопросы
+                      randomQuizzes.shuffle();
                     });
                     break;
 
                   case 'New quiz':
-                    // Начать новый квиз (можно перезапустить другой набор данных)
                     setState(() {
                       currentQuestionIndex = 0;
                       correctAnswers = 0;
@@ -302,13 +298,10 @@ class _QuestionState extends State<Question> {
                     break;
 
                   case 'Next':
-                    // Вернуться или перейти к следующему разделу/экрану
-                    Navigator.pop(context); // Или другой переход
+                    Navigator.pop(context);
                     break;
 
                   default:
-                    // В случае чего-то неожиданного
-                    debugPrint("Неизвестная кнопка: $buttonText");
                 }
               }
             },
@@ -324,12 +317,6 @@ class _QuestionState extends State<Question> {
         ),
         child: Center(
           child: Text(
-            // (buttonText == "New quiz")
-            //     ? "New quiz"
-            //     : (buttonText == "Try again")
-            //         ? "Try again"
-            //         : "Next",
-
             !showResult ? "Next" : buttonText,
             style: theme.bodyMedium?.copyWith(
               color: AppColors.white,

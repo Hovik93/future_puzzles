@@ -47,7 +47,7 @@ class _AwardState extends State<Award> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "${widget.achievementsData?['name']}",
+                  "${widget.achievementsData?['title']}",
                   style: theme.titleMedium,
                 ),
                 SizedBox(

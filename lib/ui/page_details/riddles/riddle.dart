@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:future_puzzles/base/colors.dart';
 import 'package:future_puzzles/base/images.dart';
+import 'package:future_puzzles/ui/data_storage.dart';
 
 class Riddle extends StatefulWidget {
   final String? title;
@@ -149,12 +150,16 @@ class _RiddleState extends State<Riddle> {
       final option = entry.value;
 
       return GestureDetector(
-        onTap: () {
+        onTap: () async {
           setState(() {
             selectedOption = option;
             if (option.split(':')[0] ==
                 randomQuizzes[currentQuestionIndex]['correct_answer']) {
               correctAnswers++;
+              if (widget.riddlesData['category'] == "Future Technologies") {
+                DataStorage.updateAchievement("visionary", 1);
+              }
+              DataStorage.updateAchievement("fast_learner", 1);
             }
           });
         },

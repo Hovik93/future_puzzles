@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:future_puzzles/base/colors.dart';
+import 'package:future_puzzles/data/achievements_data.dart';
 import 'package:future_puzzles/data/scenarios_data.dart';
+import 'package:future_puzzles/ui/data_storage.dart';
 import 'package:future_puzzles/ui/page_details/scenarios/scenario_details.dart';
 import 'package:future_puzzles/ui/widgets/bottom_navigation_bar.dart';
 
@@ -18,6 +20,68 @@ class Scenarios extends StatefulWidget {
 }
 
 class _ScenariosState extends State<Scenarios> {
+  Map<String, int> achievements = {};
+  int totalPoints = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      achievements = await DataStorage.getAchievements();
+      _updateAchievementsData();
+      setState(() {});
+    });
+  }
+
+  void _updateAchievementsData() {
+    for (final achievement in achievementsData["achievements"]) {
+      final achievementKey =
+          achievement["title"].toLowerCase().replaceAll(' ', '_');
+      if ((((achievements[achievementKey] ?? 0) >= 5) &&
+              (achievementKey == "visionary")) ||
+          (((achievements[achievementKey] ?? 0) >= 10) &&
+              (achievementKey == "fast_learner")) ||
+          (((achievements[achievementKey] ?? 0) >= 5) &&
+              (achievementKey == "trend_spotter")) ||
+          (((achievements[achievementKey] ?? 0) >= 50) &&
+              (achievementKey == "quiz_whiz"))) {
+        achievement['lock'] = false;
+      } else if (achievementKey == "futurist") {
+        final visionaryUnlocked = achievementsData["achievements"].firstWhere(
+                (a) =>
+                    a["title"].toLowerCase().replaceAll(' ', '_') ==
+                    "visionary")['lock'] ==
+            false;
+        final fastLearnerUnlocked = achievementsData["achievements"].firstWhere(
+                (a) =>
+                    a["title"].toLowerCase().replaceAll(' ', '_') ==
+                    "fast_learner")['lock'] ==
+            false;
+        final trendSpotterUnlocked = achievementsData["achievements"]
+                .firstWhere((a) =>
+                    a["title"].toLowerCase().replaceAll(' ', '_') ==
+                    "trend_spotter")['lock'] ==
+            false;
+
+        if (visionaryUnlocked && fastLearnerUnlocked && trendSpotterUnlocked) {
+          achievement['lock'] = false;
+        } else {
+          achievement['lock'] = true;
+        }
+      } else {
+        achievement['lock'] = true;
+      }
+    }
+
+    totalPoints = achievementsData["achievements"]
+        .where((achievement) => !achievement["lock"])
+        .fold<int>(
+          0,
+          (int sum, Map<String, dynamic> achievement) =>
+              sum + (achievement["points"] as int? ?? 0),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme theme = Theme.of(context).textTheme;
@@ -47,12 +111,20 @@ class _ScenariosState extends State<Scenarios> {
                     SizedBox(
                       height: 20.w,
                     ),
-                    ...List.generate(
-                      scenariosData['scenarios'].length,
-                      (index) => scenariosCard(
-                        theme: theme,
-                        scenario: scenariosData['scenarios'][index],
-                      ),
+                    ListView.builder(
+                      itemCount: scenariosData['scenarios'].length,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final scenario = scenariosData["scenarios"][index];
+                        final bool isUnlocked =
+                            (index == 0 && totalPoints >= 500) ||
+                                (index == 1 && totalPoints >= 1000);
+                        return scenariosCard(
+                            theme: theme,
+                            scenario: scenario,
+                            isUnlocked: isUnlocked);
+                      },
                     )
                   ],
                 ),
@@ -105,35 +177,37 @@ class _ScenariosState extends State<Scenarios> {
   }
 
   Widget scenariosCard(
-      {required Map<String, dynamic> scenario, required TextTheme theme}) {
+      {required Map<String, dynamic> scenario,
+      required TextTheme theme,
+      required bool isUnlocked}) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16.w),
       child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) {
-              return ScenarioDetails(
-                title: "Scenario",
-                beforeTitle: "Scenarios",
-                scenarioData: scenario,
-              );
-            }),
-          );
-        },
+        onTap: isUnlocked
+            ? () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) {
+                    return ScenarioDetails(
+                      title: "Scenario",
+                      beforeTitle: "Scenarios",
+                      scenarioData: scenario,
+                    );
+                  }),
+                );
+              }
+            : () {},
         child: Stack(
           children: [
-            // Background Image
             ClipRRect(
               borderRadius: BorderRadius.circular(16.w),
               child: Image.asset(
-                scenario['image'], // Замените на путь к изображению
+                scenario['image'],
                 width: double.infinity,
                 height: 220.w,
                 fit: BoxFit.cover,
               ),
             ),
-            // Overlay and content
             Container(
               height: 220.w,
               decoration: BoxDecoration(
@@ -148,7 +222,6 @@ class _ScenariosState extends State<Scenarios> {
                 ),
               ),
             ),
-        
             Positioned(
               left: 8.w,
               top: 8.w,
@@ -172,11 +245,10 @@ class _ScenariosState extends State<Scenarios> {
                             color: AppColors.white,
                           ),
                         ),
-                        // SizedBox(height: 4.w),
                         Text(
                           scenario['description'],
-                          style: theme.titleSmall
-                              ?.copyWith(color: AppColors.white, fontSize: 13.sp),
+                          style: theme.bodySmall?.copyWith(
+                              color: AppColors.white, fontSize: 13.sp),
                           maxLines: 9,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -186,7 +258,6 @@ class _ScenariosState extends State<Scenarios> {
                 ),
               ),
             ),
-            // Lock Icon (if points are required)
             Positioned(
               top: 8.w,
               right: 8.w,
@@ -197,7 +268,9 @@ class _ScenariosState extends State<Scenarios> {
                   borderRadius: BorderRadius.circular(4.w),
                 ),
                 child: Icon(
-                  Icons.lock_outline,
+                  isUnlocked == false
+                      ? Icons.lock_outline_rounded
+                      : Icons.lock_open_rounded,
                   color: Colors.white,
                   size: 30.w,
                 ),

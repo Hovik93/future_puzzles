@@ -66,7 +66,6 @@ class _HomePageState extends State<HomePage> {
             showSelectedLabels: true,
             showUnselectedLabels: true,
             unselectedItemColor: AppColors.grey2,
-            // selectedItemColor: AppColors.transparent,
             selectedIconTheme: IconThemeData(color: AppColors.transparent),
             onTap: onTap,
             items: [

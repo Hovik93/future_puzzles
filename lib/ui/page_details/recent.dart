@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:future_puzzles/base/colors.dart';
-import 'package:future_puzzles/data/articles_data.dart';
 import 'package:future_puzzles/ui/page_details/articles/article_details.dart';
 import 'package:future_puzzles/ui/page_details/award.dart';
 import 'package:future_puzzles/ui/widgets/bottom_navigation_bar.dart';
