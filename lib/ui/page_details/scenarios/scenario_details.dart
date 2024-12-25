@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:future_puzzles/base/colors.dart';
+import 'package:future_puzzles/ui/data_storage.dart';
 import 'package:future_puzzles/ui/page_details/articles/article_details.dart';
 import 'package:future_puzzles/ui/page_details/quizzes/question.dart';
 
@@ -82,7 +83,11 @@ class _ScenarioDetailsState extends State<ScenarioDetails> {
                             ["image"],
                         description: widget.scenarioData['content']["article"]
                             ['title'],
-                        onTap: () {
+                        onTap: () async {
+                          await DataStorage.addRecentData({
+                            "type": "Article",
+                            "data": widget.scenarioData['content']["article"],
+                          });
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (_) {

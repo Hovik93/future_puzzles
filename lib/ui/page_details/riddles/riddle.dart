@@ -314,7 +314,7 @@ class _RiddleState extends State<Riddle> {
       child: Container(
         width: double.infinity,
         height: 46.w,
-        margin: EdgeInsets.only(bottom: 30.w),
+        margin: EdgeInsets.only(bottom: 20.w),
         decoration: BoxDecoration(
           color: selectedOption == null
               ? AppColors.blue2.withOpacity(0.3)
@@ -370,6 +370,7 @@ class _RiddleState extends State<Riddle> {
           Positioned(
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height - 190.w,
               child: Image.asset(
                 backgroundPath,
                 fit: BoxFit.cover,

@@ -21,6 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool isEditingName = false;
   Map<String, int> achievements = {};
   int totalPoints = 0;
+  TextEditingController nameController = TextEditingController();
 
   @override
   void initState() {
@@ -152,6 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ? Expanded(
                 child: TextField(
                   autofocus: true,
+                  controller: nameController,
                   onSubmitted: (value) {
                     setState(() {
                       userName = value.isNotEmpty ? value : "User";
@@ -178,6 +180,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onTap: () {
             setState(() {
               isEditingName = !isEditingName;
+              userName = nameController.text;
+              _saveUserName(userName);
             });
           },
           child: Container(
