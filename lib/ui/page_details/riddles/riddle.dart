@@ -31,7 +31,6 @@ class _RiddleState extends State<Riddle> {
   @override
   void initState() {
     super.initState();
-    // Выбираем случайные 5 вопросов
     randomQuizzes =
         (widget.riddlesData['puzzles'] as List<Map<String, dynamic>>).toList()
           ..shuffle();
@@ -53,7 +52,7 @@ class _RiddleState extends State<Riddle> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               appBar(theme: theme),
-              Spacer(),
+              const Spacer(),
               if (!showAnswer && !showResult)
                 questionTitle(theme, currentQuestion['title']),
               if (!showAnswer && !showResult) SizedBox(height: 25.w),
@@ -65,7 +64,7 @@ class _RiddleState extends State<Riddle> {
               if (showAnswer && !showResult)
                 correctAnswerUI(theme, currentQuestion),
               if (showResult) buildResultScreen(theme),
-              Spacer(),
+              const Spacer(),
               nextButton(theme),
             ],
           ),
@@ -147,7 +146,6 @@ class _RiddleState extends State<Riddle> {
 
   List<Widget> buildOptions(TextTheme theme, List<String> options) {
     return options.asMap().entries.map((entry) {
-      // final index = entry.key;
       final option = entry.value;
 
       return GestureDetector(
@@ -156,7 +154,7 @@ class _RiddleState extends State<Riddle> {
             selectedOption = option;
             if (option.split(':')[0] ==
                 randomQuizzes[currentQuestionIndex]['correct_answer']) {
-              correctAnswers++; // Увеличиваем счетчик правильных ответов
+              correctAnswers++;
             }
           });
         },
@@ -255,12 +253,10 @@ class _RiddleState extends State<Riddle> {
           : () {
               if (!showResult) {
                 if (!showAnswer) {
-                  // Если правильный ответ ещё не показан
                   setState(() {
                     showAnswer = true;
                   });
                 } else {
-                  // Если правильный ответ показан
                   if (currentQuestionIndex < randomQuizzes.length - 1) {
                     setState(() {
                       currentQuestionIndex++;
@@ -277,19 +273,17 @@ class _RiddleState extends State<Riddle> {
               } else {
                 switch (buttonText) {
                   case 'Try again':
-                    // Перезапуск текущего набора вопросов
                     setState(() {
                       currentQuestionIndex = 0;
                       correctAnswers = 0;
                       selectedOption = null;
                       showAnswer = false;
                       showResult = false;
-                      randomQuizzes.shuffle(); // Перемешиваем вопросы
+                      randomQuizzes.shuffle();
                     });
                     break;
 
                   case 'New riddles':
-                    // Начать новый квиз (можно перезапустить другой набор данных)
                     setState(() {
                       currentQuestionIndex = 0;
                       correctAnswers = 0;
@@ -305,19 +299,17 @@ class _RiddleState extends State<Riddle> {
                     break;
 
                   case 'Next':
-                    // Вернуться или перейти к следующему разделу/экрану
-                    Navigator.pop(context); // Или другой переход
+                    Navigator.pop(context);
                     break;
 
                   default:
-                    // В случае чего-то неожиданного
-                    debugPrint("Неизвестная кнопка: $buttonText");
                 }
               }
             },
       child: Container(
         width: double.infinity,
         height: 46.w,
+        margin: EdgeInsets.only(bottom: 30.w),
         decoration: BoxDecoration(
           color: selectedOption == null
               ? AppColors.blue2.withOpacity(0.3)
@@ -326,12 +318,6 @@ class _RiddleState extends State<Riddle> {
         ),
         child: Center(
           child: Text(
-            // (buttonText == "New quiz")
-            //     ? "New quiz"
-            //     : (buttonText == "Try again")
-            //         ? "Try again"
-            //         : "Next",
-
             !showResult ? "Next" : buttonText,
             style: theme.bodyMedium?.copyWith(
               color: AppColors.white,

@@ -315,6 +315,7 @@ class _QuestionState extends State<Question> {
       child: Container(
         width: double.infinity,
         height: 46.w,
+        margin: EdgeInsets.only(bottom: 30.w),
         decoration: BoxDecoration(
           color: selectedOption == null
               ? AppColors.blue2.withOpacity(0.3)

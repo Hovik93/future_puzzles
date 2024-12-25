@@ -4,21 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:future_puzzles/base/colors.dart';
 import 'package:future_puzzles/data/articles_data.dart';
-import 'package:future_puzzles/ui/data_storage.dart';
 import 'package:future_puzzles/ui/page_details/articles/article_details.dart';
+import 'package:future_puzzles/ui/page_details/award.dart';
 import 'package:future_puzzles/ui/widgets/bottom_navigation_bar.dart';
 
 // ignore: must_be_immutable
-class Articles extends StatefulWidget {
+class Recent extends StatefulWidget {
   String? title;
   String? beforeTitle;
-  Articles({super.key, this.title, this.beforeTitle});
+  List<Map<String, dynamic>>? recentData;
+  Recent({super.key, this.title, this.beforeTitle, this.recentData});
 
   @override
-  State<Articles> createState() => _ArticlesState();
+  State<Recent> createState() => _RecentState();
 }
 
-class _ArticlesState extends State<Articles> {
+class _RecentState extends State<Recent> {
   @override
   Widget build(BuildContext context) {
     final TextTheme theme = Theme.of(context).textTheme;
@@ -49,9 +50,9 @@ class _ArticlesState extends State<Articles> {
                       height: 20.w,
                     ),
                     ...List.generate(
-                      articlesData['articles'].length,
+                      widget.recentData?.length ?? 0,
                       (index) => articleCard(
-                        article: articlesData['articles'][index],
+                        recent: widget.recentData![index],
                         theme: theme,
                       ),
                     )
@@ -106,25 +107,37 @@ class _ArticlesState extends State<Articles> {
   }
 
   Widget articleCard(
-      {required Map<String, dynamic> article, required TextTheme theme}) {
+      {required Map<String, dynamic> recent, required TextTheme theme}) {
     return Padding(
       padding: EdgeInsets.only(bottom: 20.w),
       child: GestureDetector(
-        onTap: () async {
-          await DataStorage.addRecentData({
-            "type": "Article",
-            "data": article,
-          });
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) {
-              return ArticlesDetails(
-                title: "Article",
-                beforeTitle: "Articles",
-                articleData: article,
+        onTap: () {
+          switch (recent['type']) {
+            case "Award":
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) {
+                  return Award(
+                    title: "Award",
+                    beforeTitle: "Profile",
+                    achievementsData: recent['data'],
+                  );
+                }),
               );
-            }),
-          );
+              break;
+            case "Article":
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) {
+                  return ArticlesDetails(
+                    title: "Article",
+                    beforeTitle: "Articles",
+                    articleData: recent['data'],
+                  );
+                }),
+              );
+            default:
+          }
         },
         child: Container(
           decoration: BoxDecoration(
@@ -143,7 +156,7 @@ class _ArticlesState extends State<Articles> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.w),
                 child: Image.asset(
-                  article['image'],
+                  recent['data']['image'],
                   width: double.infinity,
                   height: 362.w,
                   fit: BoxFit.cover,
@@ -163,11 +176,23 @@ class _ArticlesState extends State<Articles> {
                       color: AppColors.grey1.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(8.w),
                     ),
-                    child: Text(
-                      article['title'],
-                      style: theme.titleMedium?.copyWith(
-                        color: Colors.white,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (recent['type'] == "Award")
+                          Text(
+                            recent['type'],
+                            style: theme.titleMedium?.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        Text(
+                          recent['data']['title'],
+                          style: theme.titleMedium?.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

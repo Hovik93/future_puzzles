@@ -6,6 +6,7 @@ import 'package:future_puzzles/base/colors.dart';
 import 'package:future_puzzles/data/achievements_data.dart';
 import 'package:future_puzzles/data/scenarios_data.dart';
 import 'package:future_puzzles/ui/data_storage.dart';
+import 'package:future_puzzles/ui/page_details/award.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -246,45 +247,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
             scrollDirection: Axis.horizontal,
             itemCount: achievementsData["achievements"].length,
             itemBuilder: (context, index) {
-              return Container(
-                width: 93.w,
-                height: 93.w,
-                margin: EdgeInsets.only(right: 10.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.w),
-                  image: DecorationImage(
-                    image: AssetImage(
-                      achievementsData["achievements"][index]["image"],
+              return GestureDetector(
+                onTap: () async {
+                  await DataStorage.addRecentData({
+                    "type": "Award",
+                    "data": achievementsData["achievements"][index],
+                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) {
+                      return Award(
+                        title: "Award",
+                        beforeTitle: "Profile",
+                        achievementsData: achievementsData["achievements"]
+                            [index],
+                      );
+                    }),
+                  );
+                },
+                child: Container(
+                  width: 93.w,
+                  height: 93.w,
+                  margin: EdgeInsets.only(right: 10.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.w),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        achievementsData["achievements"][index]["image"],
+                      ),
+                      fit: BoxFit.cover,
                     ),
-                    fit: BoxFit.cover,
                   ),
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12.w),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                        child: Container(
-                          color: Colors.black.withOpacity(0.3),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12.w),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                          child: Container(
+                            color: Colors.black.withOpacity(0.3),
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      width: 44.w,
-                      height: 44.w,
-                      decoration: BoxDecoration(
-                        color: AppColors.grey1.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(8.w),
+                      Container(
+                        width: 44.w,
+                        height: 44.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.grey1.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(8.w),
+                        ),
+                        child: Icon(
+                          Icons.lock_outline_rounded,
+                          color: Colors.white,
+                          size: 32.w,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.lock_outline_rounded,
-                        color: Colors.white,
-                        size: 32.w,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
