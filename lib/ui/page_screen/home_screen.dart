@@ -45,16 +45,25 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   List<Map<String, dynamic>> recentData = [];
+  String userName = "User";
 
   @override
   void initState() {
     super.initState();
+    _loadUserName();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       recentData = await DataStorage.getRecentData();
 
       if (mounted) {
         setState(() {});
       }
+    });
+  }
+
+  Future<void> _loadUserName() async {
+    final name = await DataStorage.getUserName();
+    setState(() {
+      userName = name;
     });
   }
 
@@ -234,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget appBar({TextTheme? theme}) {
     return Text(
-      'Welcome! User',
+      'Welcome! $userName',
       style: theme?.titleLarge,
     );
   }
